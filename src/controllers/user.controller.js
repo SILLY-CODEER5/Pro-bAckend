@@ -1,8 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
-import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { User } from "../models/user.model.js";
+
 const registerUser = asyncHandler(async (req, res) => {
     // get user details from frontend as userSchema
     // validation - not empty
@@ -17,7 +18,8 @@ const registerUser = asyncHandler(async (req, res) => {
     // getting user details
 
     const { username, email, fullName, password } = req.body;
-    console.log(username, email);
+    // console.log(username, email);
+    // console.log("request.body -> (", req.body, ")");
 
     // validations...
 
@@ -35,7 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // user already exists or not
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }],
     });
 
@@ -48,10 +50,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // check for avatar, coverImages ...
 
+    // console.log(req.files);
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    console.log(avatarLocalPath);
+    // console.log(avatarLocalPath);
     const coverLocalPath = req.files?.coverImage[0]?.path;
-    console.log(coverLocalPath);
+    // console.log(coverLocalPath);
 
     if (!avatarLocalPath) {
         throw new apiError(400, "Avatar is compulsory !");
